@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="../static/login.css" th:href="@{/login.css}" rel="stylesheet">
+
+    <title>Main page</title>
+
+</head>
+<body>
+<nav class="navbar navbar-expand-sm navbar-light">
+    <ul class="navbar-nav">
+        <li class="nav-item active" style="margin: 10px">
+            <form method="get" th:action="@{/}">
+                <button class="btn" type="submit">Home</button>
+            </form>
+        </li>
+        <li class="nav-item active" style="margin: 10px">
+            <form method="post" th:action="@{/logout}">
+                <button class="btn" type="submit">Logout</button>
+            </form>
+        </li>
+        <li class="nav-item" style="margin: 10px" th:if="${isManager == true}">
+            <form method="get" th:action="@{/add-movie}">
+                <button class="btn" type="submit">Add movie</button>
+            </form>
+        </li>
+        <li class="nav-item" style="margin: 10px" th:if="${isManager == true}">
+            <form method="get" th:action="@{/set-movie-show}">
+                <button class="btn" type="submit">Set movie show</button>
+            </form>
+        </li>
+        <li class="nav-item" style="margin: 10px" th:if="${isManager == true}">
+            <form method="get" th:action="@{/screens}">
+                <button class="btn" type="submit">Screens</button>
+            </form>
+        </li>
+        <li class="nav-item" style="margin: 10px" th:if="${isManager == true}">
+            <form method="get" th:action="@{/movies-list}">
+                <button class="btn" type="submit">Movies list</button>
+            </form>
+        </li>
+        <li class="nav-item" style="margin: 10px" th:if="${isManager == true}">
+            <form method="get" th:action="@{/shows-list}">
+                <button class="btn" type="submit">Shows list</button>
+            </form>
+        </li>
+        <li class="nav-item" style="margin: 10px">
+            <form method="get" th:action="@{/booked-seats}">
+                <button class="btn" type="submit">Booked seats</button>
+            </form>
+        </li>
+        <li class="nav-item" style="margin: 10px" th:if="${isManager == true}">
+            <form method="get" th:action="@{/all-booked-seats}">
+                <button class="btn" type="submit">All Booked seats</button>
+            </form>
+        </li>
+    </ul>
+</nav>
+
+<div class="section">
+    <div class="container">
+        <div class="row full-height justify-content-center">
+            <div class="col-12 text-center align-self-center py-5">
+                <div class="container">
+                    <div class="card h-100 mx-auto"
+                         style="padding: 10px;background-color: #2a2b38;width: 40%;">
+                        <img class="card-img-top" th:src="${show.movie.urlToImage}"
+                             alt="Image of film">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${show.movie.name}">Title</h5>
+                            <p class="card-text" th:text="${show.movie.rating}">Rating</p>
+                            <p class="card-text" th:text="${show.movie.durationTime}">DurationTime</p>
+                            <p class="card-text" th:text="${show.movie.actors}">Actors</p>
+                        </div>
+                    </div>
+                    <div class="section pb-5 pt-5 pt-sm-2 text-center">
+                        <div class="container">
+                            <h1>Gold seats</h1>
+                            <div class="btn-group">
+                                <th:block th:each="goldSeat : ${show.seatsForShow.goldSeats}">
+                                    <form th:action="@{/book-seat/{id}(id=${goldSeat.id})}"
+                                          method="get">
+                                        <button class="btn btn-outline-danger" style="margin: 5px;background: red"
+                                                type="submit" th:if="${goldSeat.booked == true}"
+                                                th:text="${goldSeat.id}">
+                                        </button>
+                                        <button class="btn btn-outline-primary" style="margin: 5px;"
+                                                type="submit" th:unless="${goldSeat.booked == true}"
+                                                th:text="${goldSeat.id}">
+                                        </button>
+                                    </form>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section pb-5 pt-5 pt-sm-2 text-center">
+                        <div class="container">
+                            <h1>Silver seats</h1>
+                            <div class="btn-group">
+                                <th:block th:each="silverSeat : ${show.seatsForShow.silverSeats}">
+                                    <form th:action="@{/book-seat/{id}(id=${silverSeat.id})}"
+                                          method="get">
+                                        <button class="btn btn-outline-danger" style="margin: 5px;background: red"
+                                                type="submit" th:if="${silverSeat.booked == true}"
+                                                th:text="${silverSeat.id}">
+                                        </button>
+                                        <button class="btn btn-outline-primary" style="margin: 5px;"
+                                                type="submit" th:unless="${silverSeat.booked == true}"
+                                                th:text="${silverSeat.id}">
+                                        </button>
+                                    </form>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section pb-5 pt-5 pt-sm-2 text-center">
+                        <div class="container">
+                            <h1>Bronze seats</h1>
+                            <div class="btn-group">
+                                <th:block th:each="bronzeSeat : ${show.seatsForShow.bronzeSeats}">
+                                    <form th:action="@{/book-seat/{id}(id=${bronzeSeat.id})}"
+                                          method="get">
+                                        <button class="btn btn-outline-danger" style="margin: 5px;background: red"
+                                                type="submit" th:if="${bronzeSeat.booked == true}"
+                                                th:text="${bronzeSeat.id}">
+                                        </button>
+                                        <button class="btn btn-outline-primary" style="margin: 5px;"
+                                                type="submit" th:unless="${bronzeSeat.booked == true}"
+                                                th:text="${bronzeSeat.id}">
+                                        </button>
+                                    </form>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Option 1: Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

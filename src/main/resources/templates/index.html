@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="../static/login.css" th:href="@{/login.css}" rel="stylesheet">
+
+    <title>Main page</title>
+
+</head>
+<body>
+<nav class="navbar navbar-expand-sm navbar-light">
+    <ul class="navbar-nav">
+        <li class="nav-item active" style="margin: 10px">
+            <form method="get" th:action="@{/}">
+                <button class="btn" type="submit">Home</button>
+            </form>
+        </li>
+        <li class="nav-item active" style="margin: 10px">
+            <form method="post" th:action="@{/logout}">
+                <button class="btn" type="submit">Logout</button>
+            </form>
+        </li>
+        <li class="nav-item" style="margin: 10px" th:if="${isManager == true}">
+            <form method="get" th:action="@{/add-movie}">
+                <button class="btn" type="submit">Add movie</button>
+            </form>
+        </li>
+        <li class="nav-item" style="margin: 10px" th:if="${isManager == true}">
+            <form method="get" th:action="@{/set-movie-show}">
+                <button class="btn" type="submit">Set movie show</button>
+            </form>
+        </li>
+        <li class="nav-item" style="margin: 10px" th:if="${isManager == true}">
+            <form method="get" th:action="@{/screens}">
+                <button class="btn" type="submit">Screens</button>
+            </form>
+        </li>
+        <li class="nav-item" style="margin: 10px" th:if="${isManager == true}">
+            <form method="get" th:action="@{/movies-list}">
+                <button class="btn" type="submit">Movies list</button>
+            </form>
+        </li>
+        <li class="nav-item" style="margin: 10px" th:if="${isManager == true}">
+            <form method="get" th:action="@{/shows-list}">
+                <button class="btn" type="submit">Shows list</button>
+            </form>
+        </li>
+        <li class="nav-item" style="margin: 10px">
+            <form method="get" th:action="@{/booked-seats}">
+                <button class="btn" type="submit">Booked seats</button>
+            </form>
+        </li>
+        <li class="nav-item" style="margin: 10px" th:if="${isManager == true}">
+            <form method="get" th:action="@{/all-booked-seats}">
+                <button class="btn" type="submit">All Booked seats</button>
+            </form>
+        </li>
+    </ul>
+</nav>
+
+<div class="section">
+    <div class="container">
+        <div class="row full-height justify-content-center">
+            <div class="col-12 text-center align-self-center py-5">
+                <div class="section pb-5 pt-5 pt-sm-2 text-center">
+                    <h1>
+                        Cinema booking website
+                    </h1>
+                </div>
+                <div class="section pb-5 pt-5 pt-sm-2 text-center">
+                    <div class="container" style="padding-top: 20px;">
+                        <div class="row">
+                            <th:block th:each="movie, itemStat : ${movies}">
+                                <div class="col-lg-3" style="padding: 10px">
+                                    <div th:if="${itemStat.index % 5 == 0 && itemStat.index != 0}" class="w-100"></div>
+                                    <div class="card h-100"
+                                         style="width: 18rem;padding: 10px;background-color: #2a2b38;">
+                                        <img class="card-img-top" th:src="${movie.movie.urlToImage}"
+                                             alt="Image of film">
+                                        <div class="card-body">
+                                            <h5 class="card-title" th:text="${movie.movie.name}">Title</h5>
+                                            <p class="card-text" th:text="${movie.movie.rating}">Rating</p>
+                                            <p class="card-text" th:text="${movie.movie.durationTime}">DurationTime</p>
+                                            <p class="card-text" th:text="${movie.movie.actors}">Actors</p>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="btn-toolbar" role="group" style="justify-content: center">
+                                                <!--                                                <form th:action="@{/movie-page/{id}(id=${movie.id})}" method="get" style="padding: 5px">-->
+                                                <!--                                                    <button class="btn btn-outline-primary" type="submit">Book seats</button>-->
+                                                <!--                                                </form>-->
+                                                <button class="btn btn-outline-primary" type="button"
+                                                        data-bs-toggle="modal"
+                                                        th:data-bs-target="${'#addScreen' + movie.movie.id}">
+                                                    Book seats
+                                                </button>
+                                                <!-- Modal for Booking -->
+                                                <div class="modal fade" th:id="${'addScreen' + movie.movie.id}"
+                                                     tabindex="-1" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content" style="background-color: #2a2b38;">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title"
+                                                                    th:attr="id=${'addScreenLabel' + movie.movie.id}">
+                                                                    Book seats</h5>
+                                                                <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <th:block th:each="show : ${movie.showList}">
+                                                                    <form th:action="@{/book-show/{id}(id=${show.id})}"
+                                                                          method="get">
+                                                                        <button class="btn btn-outline-primary" style="margin: 5px;"
+                                                                                type="submit"
+                                                                                th:text="${show.dateOfShow} + ', ' + ${show.timeOfShow}">
+                                                                        </button>
+                                                                    </form>
+                                                                </th:block>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                        data-bs-dismiss="modal">Close
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Option 1: Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
